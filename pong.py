@@ -1,10 +1,11 @@
 import pyxel
 import math
 
-SCREEN_WIDTH = 200
-SCREEN_HEIGHT = 200
+SCREEN_WIDTH = 255
+SCREEN_HEIGHT = 120
 BALL_SIZE = 2
 BALL_SPEED = 2
+PADDLE_SIZE = 8
 
 class Vec2:     #This method converts the given x and y value and converts
     def __init__(self, x, y):       #it into an easy to access vector.
@@ -34,15 +35,43 @@ class Ball:
         #if self.position.x <= BALL_SIZE:
             #self.velocity.x = -self.velocity.x
 
-class Pong:
+class Paddle:
+    def __init__(self, px, py):
+        self.position = Vec2(px, py)
+        self.velocity = 0
+    def update(self):
+        self.position.y += self.velocity
+        if pyxel.btnp(pyxel.KEY_W):
+            self.velocity = -2
+        if pyxel.btnp(pyxel.KEY_S):
+            self.velocity = 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class PlayPong:
     def __init__(self):
         pyxel.init(SCREEN_WIDTH, SCREEN_WIDTH)
         self.ball = Ball(20, 20, 2, 2)
-
+        self.bats = [Bat(10, 10), Bat(SCREEN_WIDTH - 10, 10)]
         pyxel.run(self.update, self.draw)
 
     def update(self):
         self.ball.update()
+
+        for paddle in self.paddles:
+            paddle.update()
 
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
@@ -56,10 +85,17 @@ class Pong:
             BALL_SIZE,
             0
         )
+        for paddle in self.paddles:
+            pyxel.rect(
+                paddle.position.x - PADDLE_SIZE / 4,
+                paddle.position.y - PADDLE_SIZE,
+                paddle.position.x + PADDLE_SIZE / 4,
+                paddle.position.y + PADDLE_SIZE
+            )
 
 
 
-Pong()
+PlayPong()
 
 
 
