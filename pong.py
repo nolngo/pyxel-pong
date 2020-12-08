@@ -39,43 +39,63 @@ class Paddle:
     def __init__(self, px, py):
         self.position = Vec2(px, py)
         self.velocity = 0
+        self.hitBox = HitBox(
+            self.position.x - PADDLE_SIZE / 4,
+            self.position.y - PADDLE_SIZE,
+            self.position.x + PADDLE_SIZE / 4,
+            self.position.y + PADDLE_SIZE
+        )
+
     def update(self):
         self.position.y += self.velocity
+        self.hitBox = HitBox(
+        self.position.x - PADDLE_SIZE / 4,
+        self.position.y - PADDLE_SIZE,
+        self.position.x + PADDLE_SIZE / 4,
+        self.position.y + PADDLE_SIZE
+        )
+
         if pyxel.btnp(pyxel.KEY_W):
             self.velocity = -2
         if pyxel.btnp(pyxel.KEY_S):
             self.velocity = 2
+        if self.position.y - PADDLE_SIZE < 0:
+            self.position.y = PADDLE_SIZE
+            self.velocity = 0
+        if self.position.y + PADDLE_SIZE > SCREEN_HEIGHT:
+            self.position.y = SCREEN_HEIGHT - PADDLE_SIZE
+            self.velocity = 0
 
+        
 
-
-
-
-
-
-
-
-
-
-
-
+class HitBox:
+    def __init__(self, x1, y1, x2, y2):
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
 
 
 class PlayPong:
     def __init__(self):
         pyxel.init(SCREEN_WIDTH, SCREEN_WIDTH)
         self.ball = Ball(20, 20, 2, 2)
-        self.bats = [Bat(10, 10), Bat(SCREEN_WIDTH - 10, 10)]
+        self.paddles = [Paddle(10, 10), Paddle(SCREEN_WIDTH - 10, 10)]
         pyxel.run(self.update, self.draw)
 
     def update(self):
-        self.ball.update()
-
-        for paddle in self.paddles:
-            paddle.update()
-
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
-
+        self.ball.update()
+        for paddle in self.paddles:
+            paddle.update()
+            if (paddle.hitBox.x1 < self.ball.position.x < paddle.hitBox.x2 and paddle.hitBox.y1 < self.ball.position.y < paddle.hitBox.y2): 
+                self.ball.velocity.x = -self.ball.velocity.x
+                self.score += 1
+        if self.ball.position.x >= SCREEN_WIDTH - BALL_SIZE:
+            pyxel.quit()
+        if self.ball.position.x <= BALL_SIZE:
+            pyxel.quit()
     
     def draw(self):
         pyxel.cls(3)
@@ -87,10 +107,11 @@ class PlayPong:
         )
         for paddle in self.paddles:
             pyxel.rect(
-                paddle.position.x - PADDLE_SIZE / 4,
-                paddle.position.y - PADDLE_SIZE,
-                paddle.position.x + PADDLE_SIZE / 4,
-                paddle.position.y + PADDLE_SIZE
+                paddle.hitBox.x1,
+                paddle.hitBox.y1,
+                paddle.hitBox.x2,
+                paddle.hitBox.y2,
+                0
             )
 
 
