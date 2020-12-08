@@ -81,6 +81,7 @@ class PlayPong:
         pyxel.init(SCREEN_WIDTH, SCREEN_WIDTH)
         self.ball = Ball(20, 20, 2, 2)
         self.paddles = [Paddle(10, 10), Paddle(SCREEN_WIDTH - 10, 10)]
+        self.score = 0
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -113,7 +114,12 @@ class PlayPong:
                 paddle.hitBox.y2,
                 0
             )
-
+        pyxel.text(
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT / 12,
+            str(self.score),
+            0
+        )
 
 
 PlayPong()
