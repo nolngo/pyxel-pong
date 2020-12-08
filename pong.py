@@ -1,27 +1,23 @@
 import pyxel
 import math
 
-SCREEN_WIDTH = 255
+SCREEN_WIDTH = 244
 SCREEN_HEIGHT = 120
 BALL_SIZE = 2
 BALL_SPEED = 2
-PADDLE_SIZE = 8
+PADDLE_SIZE = 6
+BACKGROUND_COLOR = 3
+ELEMENTS_COLOR = 0
 
-class Vec2:     #This method converts the given x and y value and converts
+class Vec2:     #This class converts the given x and y value and converts
     def __init__(self, x, y):       #it into an easy to access vector.
         self.x = x
-        self. y = y
-
-class Vec2_norm:
-    def __init__(self, x, y):
-        self.magnitude = math.sqrt(x * x + y * y)
-        self.x = x / self.magnitude * BALL_SPEED
-        self.y = y / self.magnitude * BALL_SPEED
+        self.y = y
 
 class Ball:
     def __init__(self, px, py, vx, vy):
         self.position = Vec2(px, py)
-        self.velocity = Vec2_norm(vx, vy)
+        self.velocity = Vec2(vx, vy)
     def update(self):
         self.position.x += self.velocity.x
         self.position.y += self.velocity.y
@@ -76,6 +72,7 @@ class HitBox:
         self.y2 = y2
 
 
+
 class PlayPong:
     def __init__(self):
         pyxel.init(SCREEN_WIDTH, SCREEN_WIDTH)
@@ -104,7 +101,7 @@ class PlayPong:
             self.ball.position.x,
             self.ball.position.y,
             BALL_SIZE,
-            0
+            ELEMENTS_COLOR
         )
         for paddle in self.paddles:
             pyxel.rect(
@@ -112,18 +109,14 @@ class PlayPong:
                 paddle.hitBox.y1,
                 paddle.hitBox.x2,
                 paddle.hitBox.y2,
-                0
+                ELEMENTS_COLOR
             )
         pyxel.text(
-            SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT / 12,
+            SCREEN_WIDTH / 2,       #Makes the score appear in the middle of the X-axis
+            SCREEN_HEIGHT / 12,     #Makes the score appear at the 1/12th top of the Y-axis
             str(self.score),
-            0
+            ELEMENTS_COLOR
         )
 
 
 PlayPong()
-
-
-
-
